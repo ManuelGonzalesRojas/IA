@@ -1,0 +1,20 @@
+#portada{
+    background-image: url(../img/portada.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 12cm;
+}
+
+.logo1{
+    height: 80%;
+}
+
+.logo2{
+    height: 60%;
+}
+
+
+footer{
+    height: 100%;
+}
