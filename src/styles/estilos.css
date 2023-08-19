@@ -18,3 +18,8 @@
 footer{
     height: 100%;
 }
+
+.imglateral{
+    box-sizing: border-box;
+    width: 400px;
+}
