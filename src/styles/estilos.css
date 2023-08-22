@@ -23,3 +23,9 @@ footer{
     box-sizing: border-box;
     width: 400px;
 }
+
+.icono{
+    box-sizing: border-box;
+    height: 150px;
+    width: auto;
+}
