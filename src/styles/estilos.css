@@ -26,6 +26,15 @@ footer{
 
 .icono{
     box-sizing: border-box;
-    height: 150px;
+    height: 100px;
     width: auto;
+}
+
+
+#portadaProyectoUno{
+    background-image: url(../img/arduinoPortada.jpg);
+    background-repeat: no-repeat;
+    background-position:center ;
+    background-color:black ;
+    height: 12cm;
 }
