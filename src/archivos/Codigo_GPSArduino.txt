@@ -1,0 +1,88 @@
+
+#include <SoftwareSerial.h>
+SoftwareSerial BTSerial(2, 3);
+String cadena = ""; // Declarar un objeto String para almacenar los datos recibidos
+String latitud = "" ;
+String longitud = "";
+int i = 0;
+
+void setup() {
+  Serial.begin(9600);
+  BTSerial.begin(9600);
+  
+}
+
+void loop() {
+  if (Serial.available()) {
+    BTSerial.write(Serial.read());
+  }
+ 
+  
+  if (BTSerial.available()) {
+    //Serial.write(BTSerial.read());
+    char c = BTSerial.read(); // Leer un byte
+    cadena += c;     // Agregarlo al objeto String
+    Serial.println("Pasando datos");
+  }else{
+    Serial.println("Termino");
+    char posicion[cadena.length()];
+
+    if (!cadena.equals("")){
+            bool b_lat  ;
+            bool b_lon ;
+            for(i=0; i<cadena.length(); i++){
+                  posicion[i] = cadena.charAt(i);
+                  
+              }
+            i = 0;
+        
+        while(posicion[i] != 'y'){
+            if(isdigit(posicion[i]) || posicion[i] == '.' || posicion[i] == '-'){
+              latitud = latitud + posicion[i];
+            }
+            i++;
+          
+          
+        }
+        
+        i = i + 2;
+        while(i < cadena.length()){
+            if(isdigit(posicion[i]) || posicion[i] == '.' || posicion[i] == '-'){
+              longitud = longitud + posicion[i];
+            }
+            i++;
+        }
+        
+      
+        Serial.println("La cadena es: " + cadena);
+        float v_lati = latitud.toFloat();
+        float v_long = longitud.toFloat();
+        Serial.println("La latitud es: " + latitud);
+        Serial.println("La longitud es: " + longitud);
+        cadena = "";
+        
+        if((v_lati< -12.0526164) && (v_lati > -12.0536242) ){
+          b_lat = true;
+        }else{
+          b_lat = false;
+        }
+        if((v_long< -77.0850065) && (v_long > -77.0860096) ){
+          b_lon = true;
+        }else{
+          b_lon = false;
+        }
+
+        if ((b_lat)&&(b_lon)){
+          Serial.println("Asistencia Detectada");
+        }else{
+          Serial.println("Asistencia Rechazada");
+        }
+
+    }
+ 
+  }
+
+  //Serial.println(cadena);
+  delay(100);
+   
+}
