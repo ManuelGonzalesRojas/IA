@@ -1,0 +1,91 @@
+
+#include <SoftwareSerial.h>
+#include <pt.h>
+SoftwareSerial BTSerial(2, 3);
+int pinPul =4;
+ int intentos = 0;
+ int cuenta =0;
+ int cuenta2 =0;
+int pinLluvia =A0;
+int pinPul2 =5;
+int pinLed= 6;
+struct pt hilo1;
+struct pt hilo2;
+
+
+void setup() {
+  Serial.begin(9600);
+  BTSerial.begin(9600);
+  
+}
+
+void loop() {
+  tarea1(&hilo1);
+  tarea2(&hilo2);
+  int valor=analogRead(pinLluvia);
+  
+ 
+  if (valor<950){
+    intentos++;
+  }
+  Serial.println(intentos);
+  Serial.println(cuenta);
+   Serial.println(cuenta2);
+  Serial.print("Valor = ");
+  Serial.println(valor);
+  if(intentos == 3){
+    if(cuenta < 2){
+      BTSerial.write("X");
+      cuenta =0;
+      intentos = 0;
+      BTSerial.println();
+    }
+    
+  }
+  if (BTSerial.available()) {
+    Serial.write(BTSerial.read());
+  }
+
+  if (Serial.available()) {
+    BTSerial.write(Serial.read());
+  }   
+  delay(2500);
+}
+
+void tarea2(struct pt *pt) {
+    PT_BEGIN(pt);
+    //Control de puerta
+    pinMode(pinPul,INPUT);
+    
+    static long t = 0;
+    if(digitalRead(pinPul) ==  HIGH){
+      cuenta++;
+      t = millis();
+        PT_WAIT_WHILE(pt, (millis()-t)<1000);
+      }
+      PT_END(pt);
+    }
+    
+
+
+void tarea1(struct pt *pt) {
+    PT_BEGIN(pt);
+    //Control de puerta
+    pinMode(pinPul2,INPUT);
+    pinMode(pinLed,OUTPUT);
+    static long t = 0;
+    if(digitalRead(pinPul2) ==  HIGH){
+      cuenta2++;
+      t = millis();
+        PT_WAIT_WHILE(pt, (millis()-t)<1000);
+      if(cuenta2 == 3){
+        digitalWrite(6,HIGH);
+        t = millis();
+        PT_WAIT_WHILE(pt, (millis()-t)<2000);
+        digitalWrite(6,LOW);
+        cuenta2 =0;
+
+      }
+    }
+    PT_END(pt);
+}
