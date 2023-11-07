@@ -27,8 +27,6 @@ progenitor(rofina, urbano).
 progenitor(amador, urbano).
 progenitor(julia, jesus).
 progenitor(urbano, jesus).
-progenitor(claudia, cristian).
-progenitor(pablo, cristian).
 progenitor(claudia, jose).
 progenitor(pablo, jose).
 progenitor(natalia, ariana).
@@ -104,7 +102,6 @@ varon(cesar).
 varon(joel).
 varon(kenny).
 varon(pablo).
-varon(cristian).
 varon(jose).
 varon(urbano).
 varon(jesus).
@@ -133,47 +130,47 @@ mujer(julia).
 
 
 
-%PAIS_DE_NACIMIENTO 
-pais(manuel_I, japon).
-pais(kim, japon).
-pais(toshiro, japon).
+%nacio_DE_NACIMIENTO 
+nacio(manuel_I, japon).
+nacio(kim, japon).
+nacio(toshiro, japon).
 
-pais(rosa, espania).
-pais(raul_I, espania).
-pais(raul_II, alemania).
-pais(angel, espania).
-pais(rosaura, espania).
-pais(natalia, espania).
+nacio(rosa, espania).
+nacio(raul_I, espania).
+nacio(raul_II, alemania).
+nacio(angel, espania).
+nacio(rosaura,espania).
+nacio(natalia, espania).
 
-pais(eusebio, peru).
-pais(amador, peru).
-pais(rofina, peru).
-pais(erika, peru).
-pais(socimo, peru).
-pais(cleme, peru).
-pais(claudia, peru).
-pais(pablo, peru).
-pais(urbano, peru).
-pais(julia, peru).
-pais(jesus, peru).
-pais(cristian, peru).
-pais(jose, peru).
-pais(ariana, peru).
-pais(cesar, peru).
-pais(diana, peru).
-pais(mari, peru).
-pais(joel, peru).
-pais(kenny, peru).
-pais(hernan, peru).
-pais(pamela, peru).
-pais(nelson, peru).
-pais(rodrigo, peru).
-pais(leslie, peru).
-pais(jorge, peru).
-pais(manuel_II, peru).
-pais(mirna, peru).
-pais(arturo, peru).
-pais(laura, peru).
+nacio(eusebio, peru).
+nacio(amador, peru).
+nacio(rofina, peru).
+nacio(erika, peru).
+nacio(socimo, peru).
+nacio(cleme, peru).
+nacio(claudia, peru).
+nacio(pablo, peru).
+nacio(urbano, peru).
+nacio(julia, peru).
+nacio(jesus, peru).
+nacio(jose, peru).
+nacio(ariana, peru).
+nacio(cesar, francia).
+nacio(diana, peru).
+nacio(mari, peru).
+nacio(joel, peru).
+nacio(kenny, peru).
+nacio(hernan, peru).
+nacio(pamela, espania).
+nacio(nelson, peru).
+nacio(rodrigo, peru).
+nacio(leslie, peru).
+nacio(jorge, peru).
+nacio(manuel_II, peru).
+nacio(mirna, alemania).
+nacio(arturo, peru).
+nacio(laura, ecuador).
+
 
 %reglas
 diferente(X, Y) :- not(igual(X, Y)).
@@ -284,10 +281,53 @@ es_consuegro(X,Y) :-(progenitor(X,Z),varon(X)),(esposo(Z,W);esposa(Z,W)),progeni
 es_consuegra(X,Y) :-(progenitor(X,Z),mujer(X)),(esposo(Z,W);esposa(Z,W)), progenitor(Y,W).
 son_consuegros(X,Y) :-progenitor(X,Z),(esposo(Z,W);esposa(Z,W)), progenitor(Y,W).
 
-continente(X,europa) :- pais(X,espania);pais(X,alemania).
-continente(X,asia) :- pais(X,japon).
-continente(X,america) :- pais(X,peru).
+% continente(X,europa) :- nacio(X,espania);nacio(X,alemania).
+% continente(X,asia) :- nacio(X,japon).
+% continente(X,america) :- nacio(X,peru).
 
-% Regla para determinar si X es descendiente de Y y el pais de naciemiento de cada descendiente.
-descendiente(X, Y, Pais, C) :- progenitor(Y, X), pais(X, Pais), continente(X,C).
-descendiente(X, Y, Pais, C) :- progenitor(Z, X), descendiente(Z, Y, _,_), pais(X, Pais), continente(X,C).
+% Regla para determinar si X es descendiente de Y y el nacio de naciemiento de cada descendiente.
+% descendiente(X, Y, nacio, C) :- progenitor(Y, X), nacio(X, nacio), continente(X,C).
+% descendiente(X, Y, nacio, C) :- progenitor(Z, X), descendiente(Z, Y, _,_), nacio(X, nacio), continente(X,C).
+
+descendencia(X, Y) :- progenitor(X, Y).
+descendencia(X, Y) :- progenitor(X, Z), descendencia(Z, Y).
+
+paiscontinente(peru,america).
+paiscontinente(ecuador,america).
+paiscontinente(espania,europa).
+paiscontinente(alemania,europa).
+paiscontinente(francia,europa).
+paiscontinente(japon,asia).
+
+percon(PER,CON):- nacio(PER,XX),paiscontinente(XX,CON).
+despercon(DESC,PER,CON) :- descendencia(PER,DESC), percon(DESC,CON).
+
+% TAREA SEMANA 13
+idioma_pais(peru,espaniol).
+idioma_pais(ecuador,espaniol).
+idioma_pais(espania, espaniol).
+idioma_pais(alemania,aleman).
+idioma_pais(francia,frances).
+idioma_pais(japon,japones).
+
+% muestra los idioma_pais aprendidos por padres y por lugar de naciemiento
+% idioma_persona(PER,LENG) :- nacio(PER,XX),idioma_pais(XX,LENG);  progenitor(MAMA_Y_PAPA,PER),nacio(MAMA_Y_PAPA,ZZ),idioma_pais(ZZ,LENG).
+
+
+idioma_persona(PER, IDIOMAS) :-
+    findall(LENG, (nacio(PER, XX), idioma_pais(XX, LENG)), Listaidioma_pais), 
+    findall(LENG2, (progenitor(MAMA_Y_PAPA, PER), nacio(MAMA_Y_PAPA, ZZ), idioma_pais(ZZ, LENG2)), Listaidioma_paisProgenitores),
+    append(Listaidioma_pais, Listaidioma_paisProgenitores, Idiomas_Totales), 
+    list_to_set(Idiomas_Totales,IDIOMAS). 
+
+
+idioma_ancestro(PER,LENG) :-    nacio(PER,XX),idioma_pais(XX,LENG); progenitor(MAMA_Y_PAPA,PER), idioma_ancestro(MAMA_Y_PAPA,LENG).
+
+idioma_persona_heredado(PER,IDIOMAS) :-
+    findall(LENG, idioma_ancestro(PER,LENG),Lista_Idiomas),
+    list_to_set(Lista_Idiomas,IDIOMAS).
+
+
+losdecendientesde_hablan(PER,DESC, IDIOMAS):- descendencia(PER,DESC), idioma_persona(DESC,IDIOMAS).
+
+losdecendientesde_hablan2(PER,DESC, IDIOMAS):- descendencia(PER,DESC), idioma_persona_heredado(DESC,IDIOMAS).
